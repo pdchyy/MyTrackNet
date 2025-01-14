@@ -1,75 +1,279 @@
-import numpy as np
-import cv2
-import time
+from keras.models import *
+from keras.layers import *
+# from tensorflow.keras.models import *
+# from tensorflow.keras.layers import *
+def build_track_net(n_classes, input_height, input_width): # input_height = 360, input_width = 640
 
-def heatMap(prediction, n_classes, model_height, model_width, output_height, output_width):
-    """ Use the heatmap algorithm and HoughCircles to get the ball centre"""
-    # start_time = time.time()
-    prediction = prediction.reshape((model_height, model_width, n_classes)).argmax(axis=2)
-    prediction = prediction.astype(np.uint8)
+	imgs_input = Input(shape=(9,input_height,input_width))
 
-    feature_map = cv2.resize(prediction, (output_width, output_height))
-    ret, heatmap = cv2.threshold(feature_map, 127, 255, cv2.THRESH_BINARY)
-    circles = cv2.HoughCircles(heatmap, cv2.HOUGH_GRADIENT, dp=1,
-                               minDist=1, param1=50, param2=2, minRadius=2, maxRadius=7)
-    x, y = None, None
-    if circles is not None:
-        if len(circles) == 1:
-            x = int(circles[0][0][0])
-            y = int(circles[0][0][1])
-    
-    # run_time = time.time() - start_time
-    # print( "The heatMap running time is ", run_time)
-    return x, y
+	#layer1
+	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(imgs_input)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer2
+	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer3
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer4
+	x = Conv2D(128, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer5
+	x = Conv2D(128, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer6
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer7
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer8
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer9
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer10
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer11
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer12
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer13
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer14
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer15
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer16
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer17
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer18
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer19
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer20
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer21
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer22
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer23
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer24
+	x =  Conv2D( n_classes , (3, 3) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	out_shape = Model(imgs_input , x ).output_shape
+	#layer24 output shape: 256, 360, 640
+
+	OutputHeight = out_shape[2]
+	OutputWidth = out_shape[3]
+
+	#reshape the size to (256, 360*640)
+	x = (Reshape((-1, OutputHeight*OutputWidth)))(x)
+
+	#change dimension order to (360*640, 256)
+	x = (Permute((2, 1)))(x)
+
+	#layer25
+	gaussian_output = (Activation('softmax'))(x)
+
+	model = Model( imgs_input , gaussian_output)
+	model.outputWidth = OutputWidth
+	model.outputHeight = OutputHeight
+
+	# model.summary()
+
+	return model
+
+def build_U_net(n_classes, input_height, input_width):
+	"""" Build the TrackNet model bu U-net architecture 
+	"""
+	imgs_input = Input(shape=(9,input_height,input_width))
+
+	# Contracting path
+	#layer1
+	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(imgs_input)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer2
+	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer3
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer4
+	x = Conv2D(128, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer5
+	x = Conv2D(128, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer6
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer7
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer8
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer9
+	x = Conv2D(256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer10
+	x = MaxPooling2D((2, 2), strides=(2, 2), data_format='channels_first' )(x)
+
+	#layer11
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer12
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer13
+	x = ( Conv2D(512, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer14
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer15
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer16
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer17
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer18
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer19
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer20
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer21
+	x = ( UpSampling2D( (2,2), data_format='channels_first'))(x)
+
+	#layer22
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer23
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#layer24
+	x =  Conv2D( n_classes , (3, 3) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	out_shape = Model(imgs_input , x ).output_shape
+	#layer24 output shape: 256, 360, 640
+
+	OutputHeight = out_shape[2]
+	OutputWidth = out_shape[3]
+
+	#reshape the size to (256, 360*640)
+	x = (Reshape((-1, OutputHeight*OutputWidth)))(x)
+
+	#change dimension order to (360*640, 256)
+	x = (Permute((2, 1)))(x)
+
+	#layer25
+	gaussian_output = (Activation('softmax'))(x)
+
+	model = Model( imgs_input , gaussian_output)
+	model.outputWidth = OutputWidth
+	model.outputHeight = OutputHeight
+
+	# model.summary()
+
+	return model
 
 
-def postprocess_for_binary_heatmap(prediction, ratio=2):
-
-    prediction = prediction > 0.5
-    prediction = prediction.astype('float32')
-    h_pred = prediction*255
-    h_pred = h_pred.astype('uint8')
-    cx_pred, cy_pred = None, None
-    if np.amax(h_pred) <= 0:
-        return cx_pred, cy_pred
-    else:
-        (cnts, _) = cv2.findContours(h_pred[0].copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        rects = [cv2.boundingRect(ctr) for ctr in cnts]
-        max_area_idx = 0
-        max_area = rects[max_area_idx][2] * rects[max_area_idx][3]
-        for i in range(len(rects)):
-            area = rects[i][2] * rects[i][3]
-            if area > max_area:
-                max_area_idx = i
-                max_area = area
-        target = rects[max_area_idx]
-        (cx_pred, cy_pred) = (int(ratio*(target[0] + target[2] / 2)), int(ratio*(target[1] + target[3] / 2)))
-    return cx_pred, cy_pred
-    
-
-def get_input(height, width, path, path_prev, path_preprev):
-
-    img = cv2.imread(path)
-    img = cv2.resize(img, (width, height))
-
-    img_prev = cv2.imread(path_prev)
-    img_prev = cv2.resize(img_prev, (width, height))
-
-    img_preprev = cv2.imread(path_preprev)
-    img_preprev = cv2.resize(img_preprev, (width, height))
-
-    imgs = np.concatenate((img, img_prev, img_preprev), axis=2)
-
-    imgs = imgs.astype(np.float32) / 255.0
-
-    imgs = np.rollaxis(imgs, 2, 0)
-
-    return np.array(imgs)
 
 
-def get_output(height, width, path_gt):
-    img = cv2.imread(path_gt)
-    img = cv2.resize(img, (width, height))
-    img = img[:, :, 0]
-    img = np.reshape(img, (width * height))
-    return img
