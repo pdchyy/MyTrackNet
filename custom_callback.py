@@ -29,24 +29,26 @@ class ValidationCallback(keras.callbacks.Callback):
             for row in reader:
                 for i, v in enumerate(row):
                     validation_data[i].append(v)
-        self.validation_data = validation_data
+        self.validation_data = validation_data # validation_data is a dictionary
         print('Beginning training......')
 
     def on_epoch_begin(self, epoch, logs=None):
-        if (epoch+1) % 100 == 0:
+        # if (epoch+1) % 100 == 0: # record the value per 100 epochs
+        if (epoch+1) % 50 == 0: # must use epoch+1 which means after epoch finished
             print("Validating..... ")
-            val_loss, f1, precision, recall = validate(self.model, self.validation_data)
-            self.metrics_epochs.append(epoch + 1)
+            val_loss, f1, precision, recall = validate(self.model, self.validation_data) # The author created validate() from accuracy.py
+            self.metrics_epochs.append(epoch + 1) # why +1 ?
             self.f1.append(f1)
             self.precision.append(precision)
             self.recall.append(recall)
             self.val_loss.append(val_loss)
+            print("Validation finishes!")
 
 
     def on_epoch_end(self, epoch, logs=None):
-        self.epochs.append(epoch + 1)
+        self.epochs.append(epoch + 1) # why +1 ?
         self.losses.append(logs['loss'])
-
+        print("On epoch end")
 
     def on_train_end(self, logs=None):
         print("Stop training.....")
