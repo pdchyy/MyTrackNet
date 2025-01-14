@@ -1,9 +1,10 @@
 import numpy as np
 import cv2
+import time
 
-
-def postprocess(prediction, n_classes, model_height, model_width, output_height, output_width):
-
+def heatMap(prediction, n_classes, model_height, model_width, output_height, output_width):
+    """ Use the heatmap algorithm and HoughCircles to get the ball centre"""
+    # start_time = time.time()
     prediction = prediction.reshape((model_height, model_width, n_classes)).argmax(axis=2)
     prediction = prediction.astype(np.uint8)
 
@@ -16,7 +17,9 @@ def postprocess(prediction, n_classes, model_height, model_width, output_height,
         if len(circles) == 1:
             x = int(circles[0][0][0])
             y = int(circles[0][0][1])
-
+    
+    # run_time = time.time() - start_time
+    # print( "The heatMap running time is ", run_time)
     return x, y
 
 
