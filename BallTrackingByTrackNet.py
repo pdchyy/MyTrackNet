@@ -34,11 +34,6 @@ def main():
         if frames is None:
             print("No more successfully read this video!")
             break
-        
-        # Apply filters that removes noise and simplifies image, but not improving the accuracy
-        # dilated = cv2.dilate(frame,kernel,iterations = 1) 
-        # eroded = cv2.erode(dilated,kernel,iterations = 1)
-        # blurFrame = cv2.GaussianBlur(eroded, (13,13), 0)
             
         ballPre = ball
        
@@ -53,18 +48,7 @@ def main():
            
         # print('Balls:', len(balls))
 
-        # for num in range(len(frames)):
-        #     trace = 6
-        #     frame = frames[num]
-        #     for i in range(trace):
-        #         if (num-i > 0):
-        #             if balls[num-i][0]:
-        #                 x = int(balls[num-i][0])
-        #                 y = int(balls[num-i][1])
-        #                 frame = cv2.circle(frame, (x,y), radius=0, color = (0, 225, 165) , thickness=10-i)
-        #             else:
-        #                 break
-            
+        
         cv2.imshow("Frames", frames)
         out.write(frames)
         if cv2.waitKey(1) == ord("q"):
