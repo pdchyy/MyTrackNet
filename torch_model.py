@@ -164,7 +164,9 @@ if __name__ == "__main__":
             # y = np.array(y)
             # print("X", X)
             # print("y", y)
-            # X, y = X.to('cuda'), y.to('cuda') 
+            X = torch.tensor(X)
+            y = torch.tensor(y)
+            X, y = [X].to('cuda'), [y].to('cuda') 
             yhat = clf(X) 
             loss = loss_fn(yhat, y) 
 
