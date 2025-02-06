@@ -1,6 +1,6 @@
 ## This is trianing TrackNetV2 by modifying the TrackNet model
 
-from model import TrackNet2
+from model import TrackNet2, TrackNet, U_net
 from datasets import TrackNetDataset
 from custom_callback import ValidationCallback
 import argparse, os
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     root = Path(__file__).parent
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_model_path", type=str, default=os.path.join(root, 'models'))
-    parser.add_argument("--n_classes", type=int, default=1) # Originally is 256
+    parser.add_argument("--n_classes", type=int, default=256) # Originally is 256
     # parser.add_argument("--input_height", type=int, default=360)
     # parser.add_argument("--input_width", type=int, default=640)
     parser.add_argument("--input_height", type=int, default=360)
@@ -40,11 +40,12 @@ if __name__ == '__main__':
     load_model_status = args.load_model_status
     steps_per_epoch = args.steps_per_epoch
 
-    optimizer_name = optimizers.Adadelta(learning_rate=1.0)
- 
-    
-    model = TrackNet2(n_classes, input_height=input_height, input_width=input_width)
-      
+    # optimizer_name = optimizers.Adadelta(learning_rate=1.0)
+    optimizer_name = optimizers.Adadelta(learning_rate=1.0) # For WBCE_loss
+
+    # model = U_net(n_classes, input_height=input_height, input_width=input_width)
+    model = TrackNet2(input_height=input_height, input_width=input_width)
+    # y_hat = model.predict()
     # model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
     model.compile(loss=WBCE_loss, optimizer=optimizer_name, metrics=['accuracy'])
     # model.compile(loss=tf.keras.losses.CategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
