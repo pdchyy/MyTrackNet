@@ -3,6 +3,9 @@
 from keras.models import *
 from keras.layers import *
 from keras.activations import *
+from keras import ops
+import tensorflow as tf
+import cv2
 
 def TrackNet(n_classes, input_height, input_width): # input_height = 360, input_width = 640
 
@@ -130,7 +133,7 @@ def TrackNet(n_classes, input_height, input_width): # input_height = 360, input_
 
 	#layer25
 	gaussian_output = (Activation('softmax'))(x)
-
+	# print("gaussian_output.shape:", gaussian_output.shape)
 	model = Model( imgs_input , gaussian_output)
 	model.outputWidth = OutputWidth
 	model.outputHeight = OutputHeight
@@ -139,9 +142,10 @@ def TrackNet(n_classes, input_height, input_width): # input_height = 360, input_
 
 	return model
 
-def TrackNet2(n_classes, input_height, input_width ): # Originally input_height = 288, input_width = 512
-
+def TrackNet2( input_height, input_width ): # Originally input_height = 360, input_width = 640
+        
 	imgs_input = Input(shape=(9,input_height,input_width))
+	# imgs_input = Input(shape=(3,input_height,input_width))
 
 	#Layer1
 	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(imgs_input)
@@ -253,46 +257,40 @@ def TrackNet2(n_classes, input_height, input_width ): # Originally input_height 
 	x = ( BatchNormalization())(x)
 
 	#Layer24
-	# n_classes = 1 # For WBCE_loss
-	# x =  Conv2D(n_classes, (3, 3) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
-	# x = ( Activation('relu'))(x)
-	# x = ( BatchNormalization())(x)
-	x =  Conv2D( 1, (1, 1) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	# x =  Conv2D(3,(1,1), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x =  Conv2D(1,(1,1), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
 	x = ( Activation('sigmoid'))(x)
-    
+	print ("layer24 x.shape:",x.shape)
+	
 
 	o_shape = Model(imgs_input , x ).output_shape
 
-	#print ("layer24 output shape:", o_shape[1],o_shape[2],o_shape[3])
-	channel = o_shape[1]
+	# print ("layer24 output shape:", o_shape)
+	filters = o_shape[1]
 	OutputHeight = o_shape[2]
 	OutputWidth = o_shape[3]
 	
-	#reshape the size to (3*360*640)
-	x = (Reshape(( -1, OutputHeight*OutputWidth)))(x)
+	#reshape the size 
+	# x = (Reshape((-1, OutputHeight*OutputWidth )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
+	# x = (Reshape((OutputHeight*OutputWidth, )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
 	
-	#change dimension order to (360*640, 256)
-	# x = (Permute((2, 1)))(x)
+	# x = (Reshape((OutputHeight, OutputWidth,-1)))(x) #change dimension order to (360, 640, 3)
+	x = (Reshape((OutputWidth*OutputHeight, filters)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
+	
 
-	# layer25
-	# gaussian_output = (Activation('softmax'))(x)
-	# model = Model(imgs_input , gaussian_output)
-	#model input unit:9*288*512, output unit:3*288*512
-
-	# print("x.shape:", x.shape)
 	model = Model( imgs_input , x)
 	model.outputWidth = OutputWidth
 	model.outputHeight = OutputHeight
 
 	#Show model's details
-	#model.summary()
+	# model.summary()
 
 	return model
 
 def U_net(n_classes, input_height, input_width):
-	"""" Build the TrackNet model bu U-net architecture 
+	"""" Build the TrackNet model bu U-net architecture, but the final layer is softmax()
 	"""
-	imgs_input = Input(shape=(3,input_height,input_width))
+	imgs_input = Input(shape=(9,input_height,input_width))
 
 	# Contracting path
 	#layer1
@@ -405,8 +403,10 @@ def U_net(n_classes, input_height, input_width):
 	x = ( BatchNormalization())(x)
 
 	#Layer24
-	x =  Conv2D(n_classes, (1, 1) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
-	x = ( Activation('sigmoid'))(x)
+	x =  Conv2D( n_classes , (3, 3) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
         
 
 	o_shape = Model(imgs_input , x ).output_shape
@@ -417,10 +417,18 @@ def U_net(n_classes, input_height, input_width):
 	OutputHeight = o_shape[2]
 	OutputWidth = o_shape[3]
 
-	output = x
+	#reshape the size to (256, 360*640)
+	x = (Reshape((  -1  , OutputHeight*OutputWidth   )))(x)
 
-	model = Model( imgs_input , output)
-	#model input unit:9*288*512, output unit:3*288*512
+	#change dimension order to (360*640, 256)
+	x = (Permute((2, 1)))(x)
+
+	#layer25
+	gaussian_output = (Activation('softmax'))(x)
+
+	model = Model( imgs_input , gaussian_output)
+
+
 	model.outputWidth = OutputWidth
 	model.outputHeight = OutputHeight
 
