@@ -1,3 +1,5 @@
+
+
 import tensorflow as tf
 import os
 import pandas as pd
@@ -5,6 +7,7 @@ import cv2
 import numpy as np
 import math
 from pathlib import Path
+import matplotlib.pyplot as pyplot
 
 
 class TrackNetDataset(tf.keras.utils.Sequence):
@@ -66,18 +69,28 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         imgs = np.concatenate((img, img_prev, img_preprev), axis=2)
         imgs = imgs.astype(np.float32) / 255.0
 
-        imgs = np.rollaxis(imgs, 2, 0)
-
+        imgs = np.rollaxis(imgs, 2, 0) # The axis 2 is moved to the front
+        # print('imgs.shape:', imgs.shape)
         return np.array(imgs)
 
 
     def get_output(self, path_gt):
+        """ This is the y_true heatmap.
+        """
+        img = cv2.imread(path_gt) # img.shape = (720,1280,3)
 
-        img = cv2.imread(path_gt)
-        img = cv2.resize(img, (self.width, self.height))
-        img = img[:, :, 0]
-        img = np.reshape(img, (self.width * self.height))
+        img = cv2.resize(img, (self.width, self.height)) # Reduce (720, 1280) to (640, 360)
+       
+        img = img[:, :, 0] # Only the first is the ground_true frame because 3 channels are taken
+        
+        # img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction
+        img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
+        # img = np.reshape(img, (-1, self.height, self.width )) # For WBCE loss finction
+        # img = np.reshape(img, (self.height, self.width,-1 )) # For WBCE loss finction
+        # img = np.reshape(img, (-1, self.width * self.height)) # That's why y_true.shape=(640*360); for WBCE_loss
+        # print('img0.shape:', img.shape)
 
+        
         return img
 
 
@@ -86,7 +99,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
             return np.zeros((1, self.height, self.width))
         
         x, y = np.meshgrid(np.linspace(1, self.width, self.width), np.linspace(1, self.height, self.height))
-        heatmap = ((y - (cy + 1))**2) + ((x - (cx + 1))**2)
+        heatmap = ((y - (cy + 1))**2) + ((x - (cx + 1))**2) # ?
         heatmap[heatmap <= r**2] = 1
         heatmap[heatmap > r**2] = 0
         y = heatmap*mag
@@ -100,7 +113,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         seg_labels = np.zeros((self.height, self.width, nClasses), dtype='uint8')
         img = cv2.imread(path, 1)
         img = cv2.resize(img, (self.width, self.height))
-        img = img[:, :, 0]
+        img = img[:, :, 0] # ?
         # for c in range(nClasses):
         #     seg_labels[:, :, c] = (img == c).astype(int)
         seg_labels = tf.keras.utils.to_categorical(img, nClasses)
