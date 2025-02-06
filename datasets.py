@@ -85,12 +85,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         
         # img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction
         img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
-        # img = np.reshape(img, (-1, self.height, self.width )) # For WBCE loss finction
-        # img = np.reshape(img, (self.height, self.width,-1 )) # For WBCE loss finction
-        # img = np.reshape(img, (-1, self.width * self.height)) # That's why y_true.shape=(640*360); for WBCE_loss
-        # print('img0.shape:', img.shape)
-
-        
+       
         return img
 
 
