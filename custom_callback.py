@@ -1,6 +1,6 @@
 
 from tensorflow import keras
-from accuracy import validate
+from accuracy import validate, validate_1
 import cv2,csv
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -8,6 +8,7 @@ import os
 from glob import glob
 from collections import defaultdict
 from pathlib import Path
+import time
 
 class ValidationCallback(keras.callbacks.Callback):
 
@@ -34,24 +35,39 @@ class ValidationCallback(keras.callbacks.Callback):
 
     def on_epoch_begin(self, epoch, logs=None):
         # if (epoch+1) % 100 == 0: # record the value per 100 epochs
-        if (epoch+1) % 50 == 0: # must use epoch+1 which means after epoch finished
-            print("Validating..... ")
-            val_loss, f1, precision, recall = validate(self.model, self.validation_data) # The author created validate() from accuracy.py
-            self.metrics_epochs.append(epoch + 1) # why +1 ?
+        # if (epoch+1) % 50 == 0: # must use epoch+1 since originally the first eopch is 0.
+        if (epoch+1) % 3== 0: # must use epoch+1 since originally the first eopch is 0.
+            print(f"Validating..... at epoch={epoch+1}")
+            start = time.time()
+            # val_loss, f1, precision, recall = validate(self.model, self.validation_data) # The author created validate() from accuracy.py for SCCE loss
+            val_loss, f1, precision, recall = validate_1(self.model, self.validation_data) # The author created validate() from accuracy.py for WBCE_loss
+            self.metrics_epochs.append(epoch + 1) # since (epoch+1) % 50 == 0
             self.f1.append(f1)
             self.precision.append(precision)
             self.recall.append(recall)
             self.val_loss.append(val_loss)
-            print("Validation finishes!")
+            print(f"Validation time: {time.time()-start}")
+            print("Validation results:")
+            print('precision = {}'.format(self.precision[-1]))
+            print('recall = {}'.format(self.recall[-1]))
+            print('f1 = {}'.format(self.f1[-1]))
+            print("Validation loss:",self.val_loss[-1])
+            
 
 
     def on_epoch_end(self, epoch, logs=None):
-        self.epochs.append(epoch + 1) # why +1 ?
+        self.epochs.append(epoch + 1) # Since "if (epoch+1) % 50 == 0:"  in on_epoch_begin()
         self.losses.append(logs['loss'])
         print("On epoch end")
+        
 
     def on_train_end(self, logs=None):
-        print("Stop training.....")
+        print("Stop training....., the final:")
+        print('precision = {}'.format(self.precision[-1]))
+        print('recall = {}'.format(self.recall[-1]))
+        print('f1 = {}'.format(self.f1[-1]))
+        print("Validation loss:",self.val_loss[-1])
+        
 
         # Plot and save the Training Loss
         plt.figure(figsize=(8, 6))
