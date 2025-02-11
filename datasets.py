@@ -78,13 +78,11 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         """ This is the y_true heatmap.
         """
         img = cv2.imread(path_gt) # img.shape = (720,1280,3)
-
         img = cv2.resize(img, (self.width, self.height)) # Reduce (720, 1280) to (640, 360)
-       
         img = img[:, :, 0] # Only the first is the ground_true frame because 3 channels are taken
         
-        # img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction
-        img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
+        img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction and WBCE_loss
+        # img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
        
         return img
 
