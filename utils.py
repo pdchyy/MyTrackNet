@@ -105,46 +105,17 @@ def get_output(height, width, path_gt):
     img = cv2.imread(path_gt)
     img = cv2.resize(img, (width, height))
     img = img[:, :, 0]
-    # img = np.reshape(img, (width * height))
-    # img = np.catenate((img, img,img), axis=2)
-    # img = np.reshape(img, (3, width , height)) 
-    img = np.reshape(img, (width, height))
+    img = np.reshape(img, (width* height))
     return img
 
 
 def WBCE_loss(y_true, y_pred): 
     """" Weighted binary crossentropy loss function"""
-    # print("type(y_true0):",type(y_true))
-    # print("y_true.shape:", y_true.shape)
-    # y_true = tf.reshape(y_true, (y_true.shape[1], y_true.shape[2], y_true.shape[3]))
-    # # for i in range(y_true.shape[0]):
-    #     for j in range(y_true.shape[1]):
-    #         # for k in range(y_true.shape[2]):
-    #         indices = tf.constant([[i,j]])
-    #         updates = tf.constant([1])
-    #         print("y_true[i,j]", y_true[i,j])
-    #         if (y_true[i,j] > tf.constant([1.0])):
-    #             y_true = tf.tensor_scatter_nd_update(y_true, indices, updates)
-    # print("type(y_true):",type(y_true))
-    # print("y_true:", y_true)
-    # y_true = np.where(y_true < 1, y_true,1) # To make VC2 and VC3 are VC1
-    # y_true  = tf.convert_to_tensor(y_true)
-
-    # T_fn = lambda: 0.0
-    # F_fn = lambda: 1.0
-    # y_true = tf.cond(y_true < 1, T_fn, F_fn )
-
-
-    # cv2.imshow("y_true", y_true)
-	# # Wait for the user to press a key
-    # cv2.waitKey(0)
-
-	# # Close all windows
-    # cv2.destroyAllWindows()
-    # print("rank of y_pred:", tf.rank(y_pred))
-    # print("rank of y-true:", tf.rank(y_true))
-    loss = (-1)*(ops.square(1 - y_pred) * y_true * ops.log(ops.clip(y_pred, 1e-7, 1)) + ops.square(y_pred) * (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-7, 1)))
-    # loss = (-1)* (y_true * ops.log(ops.clip(y_pred, 1e-7, 1)) +  (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-7, 1)))
+	
+    y_pred = y_pred * 255
+    
+    loss = (-1)*(ops.square(1 - y_pred) * y_true * ops.log(ops.clip(y_pred, 1e-07, 1)) + ops.square(y_pred) * (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-07, 1)))
+    # loss = (-1)* (y_true * ops.log(ops.clip(y_pred, 1e-7, 1)) +  (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-7, 1))) # Binary CrossEntropy loss
     return ops.mean(loss)
 
 
