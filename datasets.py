@@ -80,10 +80,12 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         img = cv2.imread(path_gt) # img.shape = (720,1280,3)
         img = cv2.resize(img, (self.width, self.height)) # Reduce (720, 1280) to (640, 360)
         img = img[:, :, 0] # Only the first is the ground_true frame because 3 channels are taken
+        # For WBCE_loss + Binary heatMap to fit the output of the model
         img = img/255
+        img = img > 0.5
+        img = img.astype('float32')
         img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction and WBCE_loss
-        # img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
-       
+        
         return img
 
 
