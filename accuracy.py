@@ -96,7 +96,6 @@ def validate_1(model, validation_data, input_height=360, input_width=640, output
         prediction = model.predict(np.array([imgs]), verbose=0)[0]
         # print("prediction.shape:", prediction.shape)
         x_pred, y_pred = heatMap_1(prediction, input_height, input_width, output_height, output_width)
-        print("y_pred:", y_pred)
         # x_pred, y_pred = binary_heatMap(prediction)
         
         vis = int(vis)
