@@ -112,7 +112,10 @@ def get_output(height, width, path_gt):
 def WBCE_loss(y_true, y_pred): 
     """" Weighted binary crossentropy loss function"""
 	
-    y_pred = y_pred * 255
+    if y_pred is None:
+        y_pred = np.array(0.0)
+    else:
+        tf.cast(y_pred, tf.float32)
     
     loss = (-1)*(ops.square(1 - y_pred) * y_true * ops.log(ops.clip(y_pred, 1e-07, 1)) + ops.square(y_pred) * (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-07, 1)))
     # loss = (-1)* (y_true * ops.log(ops.clip(y_pred, 1e-7, 1)) +  (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-7, 1))) # Binary CrossEntropy loss
