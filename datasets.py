@@ -47,7 +47,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
                 
             inputs = self.get_input(path, path_prev, path_preprev)
             outputs = self.get_output(path_gt)
-
+            # outputs = self.generate_binary_heatmap(x, y, 5, 1) # for TrackNet2 + WBCE_loss, ball radius: 5 pixels
             inputs_batch.append(inputs)
             outputs_batch.append(outputs)
             # outputs = self.generate_binary_heatmap(x, y, 2.5, 1)
@@ -80,7 +80,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         img = cv2.imread(path_gt) # img.shape = (720,1280,3)
         img = cv2.resize(img, (self.width, self.height)) # Reduce (720, 1280) to (640, 360)
         img = img[:, :, 0] # Only the first is the ground_true frame because 3 channels are taken
-        
+        img = img/255
         img = np.reshape(img, (self.width * self.height)) # For SparceCategoricalCrossEntropy loss finction and WBCE_loss
         # img = np.reshape(img, (self.width * self.height,-1)) # For WBCE loss finction, the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
        
