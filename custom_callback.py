@@ -35,8 +35,8 @@ class ValidationCallback(keras.callbacks.Callback):
 
     def on_epoch_begin(self, epoch, logs=None):
         # if (epoch+1) % 100 == 0: # record the value per 100 epochs
-        # if (epoch+1) % 50 == 0: # must use epoch+1 since originally the first eopch is 0.
-        if (epoch+1) % 3== 0: # must use epoch+1 since originally the first eopch is 0.
+        if (epoch+1) % 50 == 0: # must use epoch+1 since originally the first eopch is 0.
+        
             print(f"Validating..... at epoch={epoch+1}")
             start = time.time()
             # val_loss, f1, precision, recall = validate(self.model, self.validation_data) # The author created validate() from accuracy.py for SCCE loss
