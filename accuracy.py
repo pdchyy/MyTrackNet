@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from scipy.spatial import distance
 import tensorflow as tf
-from utils import heatMap, heatMap_1, binary_heatMap, get_input, get_output, WBCE_loss
+from utils import heatMap, heatMap_1, binary_heatMap, get_input, get_output, WBCE_loss, generate_binary_heatmap
 
 
 def validate(model, validation_data, n_classes=256, input_height=360, input_width=640, output_height=720, output_width=1280, min_dist=5): 
