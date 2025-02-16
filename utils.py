@@ -108,6 +108,17 @@ def get_output(height, width, path_gt):
     img = np.reshape(img, (width* height))
     return img
 
+def generate_binary_heatmap(self, cx, cy, r, mag):
+        if cx < 0 or cy < 0:
+            return np.zeros((1, self.height, self.width))
+        
+        x, y = np.meshgrid(np.linspace(1, self.width, self.width), np.linspace(1, self.height, self.height))
+        heatmap = ((y - (cy + 1))**2) + ((x - (cx + 1))**2) # ?
+        heatmap[heatmap <= r**2] = 1
+        heatmap[heatmap > r**2] = 0
+        y = heatmap*mag
+        y = np.reshape(y, (1, self.height, self.width))
+        return y
 
 def WBCE_loss(y_true, y_pred): 
     """" Weighted binary crossentropy loss function"""
