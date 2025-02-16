@@ -108,7 +108,7 @@ def get_output(height, width, path_gt):
     img = np.reshape(img, (width* height))
     return img
 
-def generate_binary_heatmap(self, cx, cy, r, mag):
+def generate_binary_heatmap(cx, cy, r, mag=1):
         if cx < 0 or cy < 0:
             return np.zeros((1, self.height, self.width))
         
