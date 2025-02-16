@@ -274,8 +274,8 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	# x = (Reshape((-1, OutputHeight*OutputWidth )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
 	# x = (Reshape((OutputHeight*OutputWidth, )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
 	
-	# x = (Reshape((OutputHeight, OutputWidth,-1)))(x) #change dimension order to (360, 640, 3)
-	x = (Reshape((OutputWidth*OutputHeight, filters)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
+	x = (Reshape((OutputHeight, OutputWidth,-1)))(x) #change dimension order to (360, 640, 3)
+	# x = (Reshape((OutputWidth*OutputHeight, filters)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
 	
 
 	model = Model( imgs_input , x)
