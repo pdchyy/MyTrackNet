@@ -30,5 +30,12 @@ Run `python infer.py --input_video_path "/workspace/TrackNet/media/input.mp4" --
 ![](media/sw19.gif)
 
 ## Reference
-[https://arxiv.org/abs/1907.03698](https://arxiv.org/abs/1907.03698)
+1. [https://arxiv.org/abs/1907.03698](https://arxiv.org/abs/1907.03698)
 TrackNet: A Deep Learning Network for Tracking High-speed and Tiny Objects in Sports Applications
+2. https://github.com/hgupt3/TRACE/blob/main/README.md
+3. https://gitlab.nol.cs.nycu.edu.tw/open-source/TrackNet
+4. https://gitlab.nol.cs.nycu.edu.tw/open-source/TrackNetv2
+5. https://github.com/tan1199/TrackNet/tree/master
+6. https://github.com/qaz812345/TrackNetV3/blob/master/model.py
+
+
