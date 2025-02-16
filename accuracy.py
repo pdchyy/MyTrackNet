@@ -122,9 +122,9 @@ def validate_1(model, validation_data, input_height=360, input_width=640, output
         recall = sum(tp) / (vc1 + vc2 + vc3 + eps)
         f1 = 2 * precision * recall / (precision + recall + eps)
 
-        y_true = get_output(input_height, input_width, path_gt)
-        # scce = tf.keras.losses.SparseCategoricalCrossentropy()
-        # loss = scce(y_true, prediction).numpy()
+        
+        y_true = generate_binary_heatmap(x_gt, y_gty, 5, 1)
+        y_true = np.reshape(y_true, (input_width*input_height))
         loss = WBCE_loss(y_true , y_pred).numpy()# for WBCE_loss
         losses.append(loss.item())
 
