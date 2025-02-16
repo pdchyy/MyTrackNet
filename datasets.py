@@ -46,12 +46,12 @@ class TrackNetDataset(tf.keras.utils.Sequence):
                 y = -1
                 
             inputs = self.get_input(path, path_prev, path_preprev)
-            outputs = self.get_output(path_gt)
-            # outputs = self.generate_binary_heatmap(x, y, 5, 1) # for TrackNet2 + WBCE_loss, ball radius: 5 pixels
+            # outputs = self.get_output(path_gt) #TrackNet +SCCE loss
+            outputs = self.generate_binary_heatmap(x, y, 5, 1) # for TrackNet2 + WBCE_loss, ball radius: 5 pixels
+            outputs = np.reshape(outputs, (self.width *self.height))
             inputs_batch.append(inputs)
             outputs_batch.append(outputs)
-            # outputs = self.generate_binary_heatmap(x, y, 2.5, 1)
-
+            
         return np.array(inputs_batch), np.array(outputs_batch)
 
 
