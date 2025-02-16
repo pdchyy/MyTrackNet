@@ -1,0 +1,11 @@
+numpy
+pandas
+opencv-python
+argparse
+scipy
+tqdm
+tensorboardX
+tensorboard_plugin_profile
+tensorflow==2.17
+torch
+matplotlib
