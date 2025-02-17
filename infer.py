@@ -55,8 +55,8 @@ def infer_model(frames, model):
         imgs = np.rollaxis(imgs, 2, 0) # Since the order of TrackNet is "channel_first", the axis need to change.
         prediction = model.predict(np.array([imgs]),verbose=0)[0]
         
-        x_pred,y_pred=heatMap(prediction, n_classes, height, width, output_height, output_width)
-
+        # x_pred,y_pred=heatMap(prediction, n_classes, height, width, output_height, output_width)
+        x_pred,y_pred=heatMap_1(prediction, height, width, output_height, output_width)
         ball_track.append((x_pred, y_pred))
 
         if ball_track[-1][0] and ball_track[-2][0]:
