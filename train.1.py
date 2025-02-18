@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument("--input_height", type=int, default=360)
     parser.add_argument("--input_width", type=int, default=640)
     parser.add_argument("--epochs", type=int, default=400) # TracknetV3 only use 30
-    parser.add_argument("--batch_size", type=int, default=2) # 2 change to ?, the batch_size increasing will cause the processing time increasing
+    parser.add_argument("--batch_size", type=int, default=3) # 2 change to ?, the batch_size increasing will cause the processing time increasing
     parser.add_argument("--load_model_status", type=str, default=False)
     parser.add_argument("--steps_per_epoch", type=int, default=200) # 200 change to 300, which means more films(batches) are trained.
 
