@@ -105,6 +105,11 @@ def get_output(height, width, path_gt):
     img = cv2.imread(path_gt)
     img = cv2.resize(img, (width, height))
     img = img[:, :, 0]
+    # For WBCE_loss + Binary heatMap to fit the output of the model
+    img = img/255
+    img = img > 0.5
+    img = img.astype('float32')
+    ###############################################
     img = np.reshape(img, (width* height))
     return img
 
