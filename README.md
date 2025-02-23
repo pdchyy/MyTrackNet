@@ -1,4 +1,5 @@
-# TrackNet ( From 5)
+# TrackNet 
+The most of the codes and the contents of README in this project are adapted from [5].
 *Disclaimer: This is not an official implementation.*
 TrackNet is a deep learning network to track the tennis ball from broadcast videos in which the ball images are small, blurry, and sometimes with afterimage tracks or even invisible. The proposed heatmap-based deep learning network is trained to not only recognize the ball image from a single frame but also learn flying patterns from consecutive frames. TrackNet takes images with the size of 640 × 360 to generate a detection heatmap from several consecutive frames to position the ball and can achieve high precision even on public domain videos.
 This implementation leverages TensorFlow and Keras to achieve precise tracking of tennis balls in dynamic video environments
