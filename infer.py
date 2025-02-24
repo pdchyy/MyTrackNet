@@ -55,18 +55,17 @@ def infer_model(frames, model):
         imgs = np.rollaxis(imgs, 2, 0) # Since the order of TrackNet is "channel_first", the axis need to change.
         prediction = model.predict(np.array([imgs]),verbose=0)[0]
         
-        # x_pred,y_pred=heatMap(prediction, n_classes, height, width, output_height, output_width)
-        x_pred,y_pred=heatMap_1(prediction, height, width, output_height, output_width)
+        x_pred,y_pred=heatMap(prediction, n_classes, height, width, output_height, output_width)
         ball_track.append((x_pred, y_pred))
 
         if ball_track[-1][0] and ball_track[-2][0]:
             dist = distance.euclidean(ball_track[-1], ball_track[-2])
-        else:
+        else:  # If the ball is none, not tracked, set the dist=-1.
             dist = -1
         dists.append(dist)  
     return ball_track, dists 
 
-def infer_model_1(frames, model):
+def infer_model_1(frames, model): # TrackNet2(U-Net+Sigmoid) + WBCE-loss
     """ Run pretrained model on a consecutive list of frames    
     :params
         frames: list of consecutive video frames
@@ -92,10 +91,9 @@ def infer_model_1(frames, model):
         imgs = imgs.astype(np.float32)/255.0
         imgs = np.rollaxis(imgs, 2, 0) # Since the order of TrackNet is "channel_first", the axis need to change.
         prediction = model.predict(np.array([imgs]),verbose=0)[0]
-        # prediction = model(np.array([imgs])) #not works
-       
-        x_pred,y_pred=heatMap(prediction, n_classes, height, width, output_height, output_width)
-        print("num:", num, ", x_pred:" ,x_pred, ", y_pred:" ,y_pred,)
+        
+        x_pred,y_pred = heatMap_1(prediction, height, width, output_height, output_width)
+        # x_pred,y_pred = binary_heatMap(prediction, height, width, output_height, output_width, ratio=2) # Not suitable for tennis ball tracking
         ball_track.append((x_pred, y_pred))
 
         if ball_track[-1][0] and ball_track[-2][0]:
@@ -215,9 +213,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     model = load_model(args.saved_model_path)
-    # print(args.input_video_path)
-    # video_path = "media/DjokovicSinner_2024AO.mp4"
-    # frames, fps = read_video(video_path)
     frames, fps = read_video(args.input_video_path)
 
     print(len(frames))
