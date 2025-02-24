@@ -114,3 +114,4 @@ class ValidationCallback(keras.callbacks.Callback):
         plt.savefig('media/val_loss_plot.png')
         plt.close()
 
+        print("Finished!")
