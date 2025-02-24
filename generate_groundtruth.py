@@ -1,3 +1,6 @@
+## This file is used to generate the dataset for training and validation.
+# label_train.csv and labels_val.csv were created by this file.
+
 import numpy as np
 import pandas as pd
 import os
