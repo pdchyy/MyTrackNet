@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if load_model_status == True:
       model = load_model(f'{save_model_path}/tracknet.keras')
     else:
-      model = build_track_net(n_classes, input_height=input_height, input_width=input_width)
+      model = TrackNet(n_classes, input_height=input_height, input_width=input_width)
       model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
 
     train_dataset = TrackNetDataset(input_height, input_width, batch_size)
