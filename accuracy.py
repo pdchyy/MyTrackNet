@@ -27,7 +27,6 @@ def validate(model, validation_data, n_classes=256, input_height=360, input_widt
         
         prediction = model.predict(np.array([imgs]), verbose=0)[0]
         x_pred, y_pred = heatMap(prediction, n_classes, input_height, input_width, output_height, output_width)
-        # x_pred, y_pred = binary_heatMap(prediction)
         
         vis = int(vis)
         
@@ -123,8 +122,7 @@ def validate_1(model, validation_data, input_height=360, input_width=640, output
         f1 = 2 * precision * recall / (precision + recall + eps)
 
         y_true = get_output(input_height, input_width,path_gt)
-        # y_true = generate_binary_heatmap(x_gt, y_gty, 5, 1)
-        # y_true = np.reshape(y_true, (input_width*input_height))
+        y_true = np.reshape(y_true, (input_width*input_height))
         loss = WBCE_loss(y_true , y_pred).numpy()# for WBCE_loss
         losses.append(loss.item())
 
