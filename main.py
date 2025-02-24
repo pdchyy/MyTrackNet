@@ -18,7 +18,6 @@ if __name__ == '__main__':
 
     video_path = "media/D-S_24AO.mp4"
 
-    # model = load_model(args.saved_model_path, custom_objects={"WBCE_loss": WBCE_loss}) # WBCE_loss is the customized loss function
     model = load_model(args.saved_model_path) # Tracknet2 (U_Net + foftmax) +  SSCE loss function
     
     frames, fps = read_video(video_path)
