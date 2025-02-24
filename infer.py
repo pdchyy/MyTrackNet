@@ -214,13 +214,9 @@ if __name__ == '__main__':
     
     model = load_model(args.saved_model_path)
     frames, fps = read_video(args.input_video_path)
-
-    print(len(frames))
-    # print("frames.shape: ", len(frames), frames[0].shape)
     ball_track, dists = infer_model(frames, model)
-    print("after infer_model(): ", len(ball_track))
     ball_track = remove_outliers(ball_track, dists)    
-    print("after remove_outliers(): ", len(ball_track))
+    
     if args.extrapolation:
         subtracks = split_track(ball_track)
         for r in subtracks:
