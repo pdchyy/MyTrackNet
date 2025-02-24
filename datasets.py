@@ -70,7 +70,7 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         imgs = imgs.astype(np.float32) / 255.0
 
         imgs = np.rollaxis(imgs, 2, 0) # The axis 2 is moved to the front
-        # print('imgs.shape:', imgs.shape)
+       
         return np.array(imgs)
 
 
@@ -104,14 +104,4 @@ class TrackNetDataset(tf.keras.utils.Sequence):
         return y
     
 
-    def get_output_one_hot(self, path, nClasses=256):
-
-        seg_labels = np.zeros((self.height, self.width, nClasses), dtype='uint8')
-        img = cv2.imread(path, 1)
-        img = cv2.resize(img, (self.width, self.height))
-        img = img[:, :, 0] # ?
-        # for c in range(nClasses):
-        #     seg_labels[:, :, c] = (img == c).astype(int)
-        seg_labels = tf.keras.utils.to_categorical(img, nClasses)
-        seg_labels = np.reshape(seg_labels, (self.width*self.height, nClasses))
-        return seg_labels
+    
