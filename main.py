@@ -1,4 +1,4 @@
-## This file is used to test the trained model works or not, and compute the recall  of model:(U_net+Softmax)  + SCCE
+# This file is used to test the trained model works or not, and compute the recall  of model: TrackNet + SCCE , or (U_net+Softmax)  + SCCE
 
 from pathlib import Path
 import tensorflow as tf
