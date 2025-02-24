@@ -145,7 +145,6 @@ def TrackNet(n_classes, input_height, input_width): # input_height = 360, input_
 def TrackNet2( input_height, input_width ): # Originally input_height = 360, input_width = 640
         
 	imgs_input = Input(shape=(9,input_height,input_width))
-	# imgs_input = Input(shape=(3,input_height,input_width))
 
 	#Layer1
 	x = Conv2D(64, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(imgs_input)
@@ -210,7 +209,6 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	#x = (Dropout(0.5))(x)
 
 	#Layer14
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
 	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x3], axis=1)
 
 	#Layer15
@@ -229,7 +227,6 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	x = ( BatchNormalization())(x)
 	
 	#Layer18
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
 	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x2], axis=1)
 
 	#Layer19
@@ -243,7 +240,6 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	x = ( BatchNormalization())(x)
 
 	#Layer21
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
 	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x1], axis=1)
 
 	#Layer22
@@ -262,10 +258,8 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	x = ( Activation('sigmoid'))(x)
 	print ("layer24 x.shape:",x.shape)
 	
-
 	o_shape = Model(imgs_input , x ).output_shape
 
-	# print ("layer24 output shape:", o_shape)
 	filters = o_shape[1]
 	OutputHeight = o_shape[2]
 	OutputWidth = o_shape[3]
@@ -274,9 +268,9 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	# x = (Reshape((-1, OutputHeight*OutputWidth )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
 	# x = (Reshape((OutputHeight*OutputWidth, )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
 	
-	x = (Reshape((OutputHeight, OutputWidth,-1)))(x) #change dimension order to (360, 640, 1)
 	# x = (Reshape((OutputWidth*OutputHeight, filters)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
-	
+	x = (Reshape((OutputWidth*OutputHeight, -1)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
+
 
 	model = Model( imgs_input , x)
 	model.outputWidth = OutputWidth
@@ -410,9 +404,6 @@ def U_net(n_classes, input_height, input_width):
         
 
 	o_shape = Model(imgs_input , x ).output_shape
-
-	#print ("layer24 output shape:", o_shape[1],o_shape[2],o_shape[3])
-	#Layer24 output shape: (3, 288, 512)
 
 	OutputHeight = o_shape[2]
 	OutputWidth = o_shape[3]
