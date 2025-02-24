@@ -7,8 +7,6 @@ import argparse, os
 from pathlib import Path
 import tensorflow as tf
 from keras import optimizers
-# from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-# from tensorflow.keras.models import load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import load_model
 
@@ -40,15 +38,12 @@ if __name__ == '__main__':
     load_model_status = args.load_model_status
     steps_per_epoch = args.steps_per_epoch
 
-    # optimizer_name = optimizers.Adadelta(learning_rate=1.0)
     optimizer_name = optimizers.Adadelta(learning_rate=1.0) # For WBCE_loss
 
-    # model = U_net(n_classes, input_height=input_height, input_width=input_width)
     model = TrackNet2(input_height=input_height, input_width=input_width)
-    # y_hat = model.predict()
-    # model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
-    model.compile(loss=WBCE_loss, optimizer=optimizer_name, metrics=['accuracy'])
-    # model.compile(loss=tf.keras.losses.CategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
+    
+    model.compile(loss=WBCE_loss, optimizer=optimizer_name, metrics=['accuracy']) 
+    
     train_dataset = TrackNetDataset(input_height, input_width, batch_size)
     # stop_early = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10)
     validation_callback = ValidationCallback() # This was created by the author for viewing the training results in figures at media
