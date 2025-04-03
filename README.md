@@ -9,9 +9,6 @@ This implementation leverages TensorFlow and Keras to achieve precise tracking o
 TrackNet2 was used in badminton; however, here it was tried in tennis ball tracking. TrackNet2 adds U-Net and Weighted Binary Crossentropy(WBCE) loss function to improve the efficiency of ball tracking. TrackNet2 does not have the softmax function in the final layer, instead it uses the sigmoid function as the final layer. Besides, the y labels are binary labels(0 and 1).
 
 
-## Architecture
-![](media/architecture.png)
-
 ## Dataset
 Dataset is available via the link: https://nycu1-my.sharepoint.com/:u:/g/personal/tik_m365_nycu_edu_tw/ETCr6-M0e1VDhGCdMbvljcsBu31AJTO5xa_1cW8pHa7niA
 Dataset consists of video clips of 10 broadcast video. Each video contains several clips from a game. There are 19.835 labeled frames in the dataset.
