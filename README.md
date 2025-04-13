@@ -21,7 +21,8 @@ Dataset consists of video clips of 10 broadcast video. Each video contains sever
     * Extract the game directories from the dataset in `images` folder
     * Create ground truth images and train/test labels via `python generate_groundtruth.py`.
     * Move `labels_train.csv and labels_val.csv` to home directory
-4. Run `python train.py` to train the model.
+4. Run `python train.py` to train the model of origianal TrackNet.
+5. Run `python train.1.py` to train the model of TrackNetV2.
 
 ## Demonstration
 1. Use main.py to test the model of TrackNet + SSCE(Sparce Categorical Cross_Entropy) loss function
