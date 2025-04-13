@@ -23,7 +23,12 @@ Dataset consists of video clips of 10 broadcast video. Each video contains sever
     * Move `labels_train.csv and labels_val.csv` to home directory
 4. Run `python train.py` to train the model.
 
-## Demo
+## Demonstration
+1. Use main.py to test the model of TrackNet + SSCE(Sparce Categorical Cross_Entropy) loss function
+2. Use main.1.py to test the model of Tracknet2(U_Net + Sigmoid) + WBCE_loss
+
+
+## Inference
 Run `python infer.py --input_video_path "/workspace/TrackNet/media/input.mp4" --output_video_path "/workspace/TrackNet/media/output.mp4"` for inference
 
 ![](media/sw19.gif)
