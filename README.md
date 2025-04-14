@@ -14,7 +14,7 @@ Dataset is available via the link: https://nycu1-my.sharepoint.com/:u:/g/persona
 Dataset consists of video clips of 10 broadcast video. Each video contains several clips from a game. There are 19.835 labeled frames in the dataset.
 
 ## Setup
-1. Clone the repository `git clone https://github.com/tan1199/TrackNet.git`
+1. Clone the repository 'github.com/pdchyy/MyTrackNet.git'
 2. Install the necessary packages `pip install -r requirements.txt`
 3. Follow the below steps to convert videos to training images and heat-maps.
 	* Create an `images` subdirectory under the home directory of the repository
@@ -25,8 +25,8 @@ Dataset consists of video clips of 10 broadcast video. Each video contains sever
 5. Run `python train.1.py` to train the model of TrackNetV2.
 
 ## Demonstration
-1. Use main.py to test the model of TrackNet + SSCE(Sparce Categorical Cross_Entropy) loss function
-2. Use main.1.py to test the model of Tracknet2(U_Net + Sigmoid) + WBCE_loss
+1. Use infer.1.py to test the model of TrackNet + SSCE(Sparce Categorical Cross_Entropy) loss function
+2. Use infer.2.py to test the model of Tracknet2(U_Net + Sigmoid) + WBCE_loss
 
 
 ## Inference
