@@ -143,7 +143,7 @@ def TrackNet(n_classes, input_height, input_width): # input_height = 360, input_
 	return model
 
 def TrackNet2( input_height, input_width ): # Originally input_height = 360, input_width = 640
-        
+
 	imgs_input = Input(shape=(9,input_height,input_width))
 
 	#Layer1
@@ -209,12 +209,10 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	#x = (Dropout(0.5))(x)
 
 	#Layer14
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x3], axis=1)
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
 
 	#Layer15
-	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
-	x = ( Activation('relu'))(x)
-	x = ( BatchNormalization())(x)
+	x = concatenate( [x, x3], axis=1)
 
 	#Layer16
 	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
@@ -225,39 +223,52 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
-	
-	#Layer18
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x2], axis=1)
 
-	#Layer19
-	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	#Layer18
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
+	
+	#Layer19
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
 
 	#Layer20
+	x = concatenate( [x, x2], axis=1)
+
+	#Layer21
 	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
-	#Layer21
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x1], axis=1)
-
 	#Layer22
-	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
 	#Layer23
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
+
+	#Layer24
+	x = concatenate( [x, x1], axis=1)
+
+	#Layer25
 	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
-	#Layer24
+	#Layer26
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#Layer27
 	# x =  Conv2D(3,(1,1), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
 	x =  Conv2D(1,(1,1), kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
-	x = ( Activation('sigmoid'))(x)
-	print ("layer24 x.shape:",x.shape)
 	
+	x = ( Activation('sigmoid'))(x)
+	
+	print ("layer27_x.shape:",x.shape)
+
 	o_shape = Model(imgs_input , x ).output_shape
 
 	filters = o_shape[1]
@@ -266,8 +277,9 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	
 	#reshape the size 
 	# x = (Reshape((-1, OutputHeight*OutputWidth )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
-	# x = (Reshape((OutputHeight*OutputWidth, )))(x) # For SparceCategoricalCrossEntropy(SCCE) loss
-	
+	# #change dimension order to (360*640, 256)
+	# x = (Permute((2, 1)))(x)
+
 	# x = (Reshape((OutputWidth*OutputHeight, filters)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
 	x = (Reshape((OutputWidth*OutputHeight, -1)))(x) # Change to one dimension (640*360, 3), the best result for 3-frames-out, 0.99 accuracy for 1-frame-out 
 
@@ -282,7 +294,7 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 	return model
 
 def U_net(n_classes, input_height, input_width):
-	"""" Build the TrackNet model bu U-net architecture, but the final layer is softmax()
+	"""" Build the TrackNet model bu U-net architecture 
 	"""
 	imgs_input = Input(shape=(9,input_height,input_width))
 
