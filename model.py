@@ -362,13 +362,10 @@ def U_net(n_classes, input_height, input_width):
 	#x = (Dropout(0.5))(x)
 
 	#Layer14
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x3], axis=1)
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
 
 	#Layer15
-	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
-	x = ( Activation('relu'))(x)
-	x = ( BatchNormalization())(x)
+	x = concatenate( [x, x3], axis=1)
 
 	#Layer16
 	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
@@ -379,36 +376,45 @@ def U_net(n_classes, input_height, input_width):
 	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
-	
-	#Layer18
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x2], axis=1)
 
-	#Layer19
-	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
+	#Layer18
+	x = ( Conv2D( 256, (3, 3), kernel_initializer='random_uniform', padding='same', data_format='channels_first'))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
+	
+	#Layer19
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
 
 	#Layer20
+	x = concatenate( [x, x2], axis=1)
+
+	#Layer21
 	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
-	#Layer21
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
-	x = concatenate( [UpSampling2D( (2,2), data_format='channels_first')(x), x1], axis=1)
-
 	#Layer22
-	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Conv2D( 128 , (3, 3), kernel_initializer='random_uniform', padding='same' , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
 	#Layer23
+	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
+
+	#Layer24
+	x = concatenate( [x, x1], axis=1)
+
+	#Layer25
 	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
 
-	#Layer24
+	#Layer26
+	x = ( Conv2D( 64 , (3, 3), kernel_initializer='random_uniform', padding='same'  , data_format='channels_first' ))(x)
+	x = ( Activation('relu'))(x)
+	x = ( BatchNormalization())(x)
+
+	#Layer27
 	x =  Conv2D( n_classes , (3, 3) , kernel_initializer='random_uniform', padding='same', data_format='channels_first' )(x)
 	x = ( Activation('relu'))(x)
 	x = ( BatchNormalization())(x)
@@ -426,7 +432,7 @@ def U_net(n_classes, input_height, input_width):
 	#change dimension order to (360*640, 256)
 	x = (Permute((2, 1)))(x)
 
-	#layer25
+	#layer28
 	gaussian_output = (Activation('softmax'))(x)
 
 	model = Model( imgs_input , gaussian_output)
