@@ -399,7 +399,7 @@ def U_net(n_classes, input_height, input_width):
 	x = ( BatchNormalization())(x)
 
 	#Layer23
-	#x = UpSampling2D( (2,2), data_format='channels_first')(x)
+	x = UpSampling2D( (2,2), data_format='channels_first')(x)
 
 	#Layer24
 	x = concatenate( [x, x1], axis=1)
