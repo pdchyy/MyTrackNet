@@ -4,16 +4,19 @@ import time
 from keras import ops
 import tensorflow as tf
 import keras.backend as K
+import keras
+from matplotlib import pyplot as plt
 
 def heatMap(prediction, n_classes, model_height, model_width, output_height, output_width):
     """ Use the cv2.threshold and HoughCircles to get the ball centre"""
-
+   
     prediction = prediction.reshape((model_height, model_width, n_classes)).argmax(axis=2) # loss= sparceCategoricalCrossEntropy
     
     prediction = prediction.astype(np.uint8)
 
     feature_map = cv2.resize(prediction, (output_width, output_height))
-    ret, feature = cv2.threshold(feature_map, 127, 255, cv2.THRESH_BINARY)
+    ret, feature = cv2.threshold(feature_map, 127, 255, cv2.THRESH_BINARY) # ret is the used threshold, si it is 127
+   
     circles = cv2.HoughCircles(feature, cv2.HOUGH_GRADIENT, dp=1,
                                minDist=1, param1=50, param2=2, minRadius=2, maxRadius=7)
     x, y = None, None
@@ -27,7 +30,7 @@ def heatMap(prediction, n_classes, model_height, model_width, output_height, out
 ## This is for WBCE_loss
 def heatMap_1(prediction, model_height, model_width, output_height, output_width):
     """ Use the cv2.threshold and HoughCircles to get the ball centre"""
-  
+   
     prediction = prediction > 0.5
     prediction = prediction.astype('float32')
     prediction = prediction * 255
@@ -36,23 +39,24 @@ def heatMap_1(prediction, model_height, model_width, output_height, output_width
     prediction = prediction.astype(np.uint8)
 
     feature_map = cv2.resize(prediction, (output_width, output_height))
+    
+    ret, feature = cv2.threshold(feature_map, 127, 255, cv2.THRESH_BINARY) # ret is the used threshold, si it is 127
    
-    ret, feature = cv2.threshold(feature_map, 127, 255, cv2.THRESH_BINARY)
-
     circles = cv2.HoughCircles(feature, cv2.HOUGH_GRADIENT, dp=1,
                                minDist=1, param1=50, param2=2, minRadius=2, maxRadius=7)
-    print("cirles:", circles)
-    x, y = None, None
+                            #    minDist=1, param1=50, param2=8, minRadius=2, maxRadius=7) # Original data from TRACE Huang
+    x, y = None, None # Original setting
+
     if circles is not None:
         if len(circles) == 1:
             x = float(circles[0][0][0])
             y = float(circles[0][0][1])
-        
+
     return x, y
 
 
-def binary_heatMap(prediction, ratio=2):
-
+def binary_heatMap(prediction, height, width, output_height, output_width, ratio=1): # This function can not work!
+   
     prediction = prediction > 0.5
     prediction = prediction.astype('float32')
     h_pred = prediction*255
@@ -61,7 +65,9 @@ def binary_heatMap(prediction, ratio=2):
     if np.amax(h_pred) <= 0:
         return cx_pred, cy_pred
     else:
-        (cnts, _) = cv2.findContours(h_pred[0].copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        h_pred = h_pred.reshape((height, width)) # loss= WBCE_loss
+        feature_map = cv2.resize(h_pred, (output_width, output_height))
+        (cnts, _) = cv2.findContours(feature_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         rects = [cv2.boundingRect(ctr) for ctr in cnts]
         max_area_idx = 0
         max_area = rects[max_area_idx][2] * rects[max_area_idx][3]
@@ -99,13 +105,15 @@ def get_output(height, width, path_gt):
     img = cv2.imread(path_gt)
     img = cv2.resize(img, (width, height))
     img = img[:, :, 0]
-    # For WBCE_loss + Binary heatMap to fit the output of the model  #########################
+    # for WBCE_lossBinary heatMap to fit the output of the model ###############
     img = img/255
     img = img > 0.5
     img = img.astype('float32')
-    ##########################################################################################
-    img = np.reshape(img, (width* height))
-    return img
+    ############################################################################
+    img = np.reshape(img, (width * height))
+    
+    return np.array(img)
+
 
 def generate_binary_heatmap(cx, cy, r, mag):
         height = 360
@@ -127,18 +135,19 @@ def generate_binary_heatmap(cx, cy, r, mag):
         return y
 
 
+# keras.saving.get_custom_objects().clear()
+# @keras.saving.register_keras_serializable(package="utils", name="WBCE_loss")
 def WBCE_loss(y_true, y_pred): 
     """" Weighted binary crossentropy loss function"""
-	
+    
     if y_pred is None:
-        y_pred = np.array(0.0)
+        y_pred = tf.constant([0.0], tf.float32)
     else:
         tf.cast(y_pred, tf.float32)
-    
-    loss = (-1)*(ops.square(1 - y_pred) * y_true * ops.log(ops.clip(y_pred, 1e-07, 1)) + ops.square(y_pred) * (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-07, 1)))
-    # loss = (-1)* (y_true * ops.log(ops.clip(y_pred, 1e-7, 1)) +  (1 - y_true) * ops.log(ops.clip(1 - y_pred, 1e-7, 1))) # Binary CrossEntropy loss
-    return ops.mean(loss)
 
+    loss = (-1)*(tf.math.square(1 - y_pred) * y_true * tf.math.log(tf.clip_by_value(y_pred, 1e-07, 1)) + tf.math.square(y_pred) * (1 - y_true) * tf.math.log(tf.clip_by_value(1 - y_pred, 1e-07, 1)))
+
+    return ops.mean(loss)
 
 def BCE_loss(y_true, y_pred): 
     """" binary crossentropy loss function, it can not be used for for imbalanced binary heatMap"""
