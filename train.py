@@ -1,4 +1,4 @@
-## This is traning for original TrackNet model
+## This is traning for original TrackNet and TrackNetU models
 
 from model import TrackNet, TrackNetU
 from datasets import TrackNetDataset
@@ -7,8 +7,6 @@ import argparse, os
 from pathlib import Path
 import tensorflow as tf
 from keras import optimizers
-# from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-# from tensorflow.keras.models import load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import load_model
 from utils import WBCE_loss
