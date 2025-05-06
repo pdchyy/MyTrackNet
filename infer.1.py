@@ -1,4 +1,4 @@
-# This file is used to test the trained model works or not, and compute the recall  of model: TrackNet + SCCE , or (U_net+Softmax)  + SCCE
+## This file is used to test the trained model works or not, and compute the recall  of model: TrackNet + SCCE , or TrackNetU (U_net+Softmax)  + SCCE
 
 from pathlib import Path
 import tensorflow as tf
@@ -11,16 +11,17 @@ if __name__ == '__main__':
     root = Path(__file__).parent
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=2, help='batch size')
-    parser.add_argument('--saved_model_path', type=str, default = os.path.join(root, 'models/tracknet.keras'), help= 'path to model')
+    parser.add_argument('--saved_model_path', type=str, default = os.path.join(root, 'models/tracknetUsc.0.keras'), help= 'path to model')
     parser.add_argument('--input_video_path', type=str, help='path to input video')
     parser.add_argument('--output_video_path', type=str, help='path to output video')
     args = parser.parse_args()
 
-    video_path = "media/D-S_24AO.mp4"
-
+    video_path = "media/M-S_24.mp4"
+    # video_path = "media/D-S_24AO.mp4"
     model = load_model(args.saved_model_path) # Tracknet2 (U_Net + foftmax) +  SSCE loss function
     
     frames, fps = read_video(video_path)
+    print("fps: ", fps)
 
     print("total frames:", len(frames))
     
@@ -42,10 +43,7 @@ if __name__ == '__main__':
     recall = len(tracked_balls)/n
     print(f"recall: {recall}")
   
-    # print("dists:", dists)
     
-    
-# recall: 0.8436018957345972 at epochs=500
 # recall: 0.9424083769633508 at epochs = 400, tracknet.4.keras   TrackNet(softmax)  + SCCE
 # recall: 0.8767772511848341 at epochs = 500, tracknet.7.keras (U_Net + softmax) + SCCE
 # recall: 0.9528795811518325 at epochs = 400, tracknetUsc.0.keras (U_Net + softmax) + SCCE
