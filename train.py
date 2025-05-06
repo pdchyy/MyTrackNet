@@ -1,6 +1,6 @@
 ## This is traning for original TrackNet model
 
-from model import TrackNet, U_net
+from model import TrackNet, TrackNetU
 from datasets import TrackNetDataset
 from custom_callback import ValidationCallback
 import argparse, os
@@ -41,7 +41,7 @@ if __name__ == '__main__':
       model = load_model(f'{save_model_path}/tracknet.keras')
     else:
       # model = TrackNet(n_classes, input_height=input_height, input_width=input_width)
-      model = U_net(n_classes, input_height=input_height, input_width=input_width)
+      model = TrackNetU(n_classes, input_height=input_height, input_width=input_width)
 
       model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer_name, metrics=['accuracy'])
       
