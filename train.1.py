@@ -1,6 +1,6 @@
 ## This is trianing TrackNetV2 by modifying the TrackNet model
 
-from model import TrackNet2, TrackNet, U_net
+from model import TrackNet2, TrackNet, TrackNetU
 from datasets import TrackNetDataset
 from custom_callback import ValidationCallback
 import argparse, os
