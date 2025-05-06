@@ -293,8 +293,8 @@ def TrackNet2( input_height, input_width ): # Originally input_height = 360, inp
 
 	return model
 
-def U_net(n_classes, input_height, input_width):
-	"""" Build the TrackNet model bu U-net architecture 
+def TrackNetU(n_classes, input_height, input_width):
+	"""" Build the TrackNet model with U-net architecture 
 	"""
 	imgs_input = Input(shape=(9,input_height,input_width))
 
