@@ -1,6 +1,6 @@
 ## This is trianing TrackNetV2 by modifying the TrackNet model
 
-from model import TrackNet2, TrackNet, TrackNetU
+from model import TrackNet2
 from datasets import TrackNetDataset
 from custom_callback import ValidationCallback
 import argparse, os
@@ -9,9 +9,7 @@ import tensorflow as tf
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import load_model
-
-from utils import WBCE_loss
-
+from utils import WBCE_loss, BCE_loss
 
 
 if __name__ == '__main__':
@@ -19,12 +17,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_model_path", type=str, default=os.path.join(root, 'models'))
     parser.add_argument("--n_classes", type=int, default=256) # Originally is 256
-    # parser.add_argument("--input_height", type=int, default=360)
-    # parser.add_argument("--input_width", type=int, default=640)
     parser.add_argument("--input_height", type=int, default=360)
     parser.add_argument("--input_width", type=int, default=640)
     parser.add_argument("--epochs", type=int, default=400) # TracknetV3 only use 30
-    parser.add_argument("--batch_size", type=int, default=3) # 2 change to ?, the batch_size increasing will cause the processing time increasing
+    parser.add_argument("--batch_size", type=int, default=2) # 2 change to ?, the batch_size increasing will cause the processing time increasing
     parser.add_argument("--load_model_status", type=str, default=False)
     parser.add_argument("--steps_per_epoch", type=int, default=200) # 200 change to 300, which means more films(batches) are trained.
 
@@ -40,9 +36,10 @@ if __name__ == '__main__':
 
     optimizer_name = optimizers.Adadelta(learning_rate=1.0) # For WBCE_loss
 
-    model = TrackNet2(input_height=input_height, input_width=input_width)
     
-    model.compile(loss=WBCE_loss, optimizer=optimizer_name, metrics=['accuracy']) 
+    model = TrackNet2(input_height=input_height, input_width=input_width)
+   
+    model.compile(loss=WBCE_loss, optimizer=optimizer_name, metrics=['accuracy'])
     
     train_dataset = TrackNetDataset(input_height, input_width, batch_size)
     # stop_early = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10)
