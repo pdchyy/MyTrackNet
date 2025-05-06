@@ -25,7 +25,7 @@ Dataset consists of video clips of 10 broadcast video. Each video contains sever
 5. Run `python train.1.py` to train the model of TrackNetV2.
 
 ## Demonstration
-1. Use infer.1.py to test the model of TrackNet + SSCE(Sparce Categorical Cross_Entropy) loss function
+1. Use infer.1.py to test the model of TrackNet or TrackNetU+ SSCE(Sparce Categorical Cross_Entropy) loss function
 2. Use infer.2.py to test the model of Tracknet2(U_Net + Sigmoid) + WBCE_loss
 
 
