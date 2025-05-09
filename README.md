@@ -28,12 +28,6 @@ Dataset consists of video clips of 10 broadcast video. Each video contains sever
 1. Use infer.1.py to test the model of TrackNet or TrackNetU+ SSCE(Sparce Categorical Cross_Entropy) loss function
 2. Use infer.2.py to test the model of Tracknet2(U_Net + Sigmoid) + WBCE_loss
 
-
-## Inference
-Run `python infer.py --input_video_path "/workspace/TrackNet/media/input.mp4" --output_video_path "/workspace/TrackNet/media/output.mp4"` for inference
-
-![](media/sw19.gif)
-
 ## Reference
 1. [https://arxiv.org/abs/1907.03698](https://arxiv.org/abs/1907.03698)
 TrackNet: A Deep Learning Network for Tracking High-speed and Tiny Objects in Sports Applications
